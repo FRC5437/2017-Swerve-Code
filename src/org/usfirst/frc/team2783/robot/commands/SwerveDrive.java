@@ -22,9 +22,9 @@ public class SwerveDrive extends Command {
     protected void execute() {
     	Double throttleValue = OI.xBoxController.getRawAxis(3) - OI.xBoxController.getRawAxis(2);
     	
-    	Double FBValue = -(OI.xBoxController.getRawAxis(1))*throttleValue;
-    	Double RLValue = OI.xBoxController.getRawAxis(0)*throttleValue;
-    	Double rotValue = OI.xBoxController.getRawAxis(4)*throttleValue;
+    	Double FBValue = -(OI.xBoxController.getRawAxis(1));
+    	Double RLValue = OI.xBoxController.getRawAxis(0);
+    	Double rotValue = OI.xBoxController.getRawAxis(4);
     	
     	Robot.swerveBase.swerveDrive(FBValue, RLValue, rotValue);
     	

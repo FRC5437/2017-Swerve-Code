@@ -36,6 +36,10 @@ public class OI {
 	public Button liftArm = new JoystickButton(manipulator, 4);
 	public Button lowerArm = new JoystickButton(manipulator, 3);
 	
+	Button swerveFB = new JoystickButton(xBoxController, 1);
+	Button swerveRL = new JoystickButton(xBoxController, 0);
+	Button swerveRot = new JoystickButton(xBoxController, 4);
+	
 	public OI() {
 		//pivotLeftTrigger.whileActive(new PivotTankDrive());
 		//pivotRightTrigger.whileActive(new PivotTankDrive());
@@ -58,8 +62,8 @@ public class OI {
 		//adjusterToTop.whenPressed(new AngleAdjusterToLimit(Limit.TOP_LIMIT));
 		//adjusterToBottom.whenPressed(new AngleAdjusterToLimit(Limit.BOTTOM_LIMIT));
 		
-		moveForwardTrigger.whileActive(new SwerveDrive());
-		moveDownwardTrigger.whileActive(new SwerveDrive());
+		swerveFB.whileActive(new SwerveDrive());
+		swerveRL.whileActive(new SwerveDrive());
 	}
 	
 }
