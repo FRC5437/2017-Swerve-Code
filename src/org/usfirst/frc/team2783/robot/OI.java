@@ -1,6 +1,6 @@
 package org.usfirst.frc.team2783.robot;
 
-import org.usfirst.frc.team2783.robot.commands.SwerveTankDrive;
+import org.usfirst.frc.team2783.robot.commands.SwerveDrive;
 import org.usfirst.frc.team2783.robot.triggers.Dpad;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -58,9 +58,8 @@ public class OI {
 		//adjusterToTop.whenPressed(new AngleAdjusterToLimit(Limit.TOP_LIMIT));
 		//adjusterToBottom.whenPressed(new AngleAdjusterToLimit(Limit.BOTTOM_LIMIT));
 		
-		//Gyro drive commands [untested]
-		moveForwardTrigger.whileActive(new SwerveTankDrive());
-		moveDownwardTrigger.whileActive(new SwerveTankDrive());
+		moveForwardTrigger.whileActive(new SwerveDrive());
+		moveDownwardTrigger.whileActive(new SwerveDrive());
 	}
 	
 }

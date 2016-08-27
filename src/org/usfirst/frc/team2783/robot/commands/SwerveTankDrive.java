@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SwerveTankDrive extends Command {
 
     public SwerveTankDrive() {
-        // Use requires() here to declare subsystem dependencies
         requires(Robot.swerveBase);
     }
 

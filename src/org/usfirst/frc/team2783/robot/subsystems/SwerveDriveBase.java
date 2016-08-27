@@ -1,14 +1,17 @@
 package org.usfirst.frc.team2783.robot.subsystems;
 
 import org.usfirst.frc.team2783.robot.RobotMap;
-import org.usfirst.frc.team2783.robot.commands.SwerveTankDrive;
+import org.usfirst.frc.team2783.robot.commands.SwerveDrive;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  *
@@ -28,8 +31,29 @@ public class SwerveDriveBase extends Subsystem {
 	
 	private AHRS navSensor;
 	
+	private Encoder frontRightEnc;
+	private Encoder frontLeftEnc;
+	private Encoder rearRightEnc;
+	private Encoder rearLeftEnc;
+	
+	private PIDController frontRightPID;
+	private PIDController frontLeftPID;
+	private PIDController rearRightPID;
+	private PIDController rearLeftPID;
+	
     public SwerveDriveBase() {
     	super();
+    	
+    	//TODO: Correct DInput
+    	frontRightEnc = new Encoder(new DigitalInput(0), new DigitalInput(1));
+    	frontLeftEnc = new Encoder(new DigitalInput(2), new DigitalInput(3));
+    	rearRightEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
+    	rearLeftEnc = new Encoder(new DigitalInput(6), new DigitalInput(7));
+    	
+    	frontRightPID = new PIDController(0.1, 0.01, 0, frontRightEnc, frontRightSwivel);
+    	frontLeftPID = new PIDController(0.1, 0.01, 0, frontLeftEnc, frontLeftSwivel);
+    	rearRightPID = new PIDController(0.1, 0.01, 0, rearRightEnc, rearRightSwivel);
+    	rearLeftPID = new PIDController(0.1, 0.01, 0, rearLeftEnc, rearLeftSwivel);
     	
     	try {
 	         navSensor = new AHRS(SPI.Port.kMXP);
@@ -51,7 +75,7 @@ public class SwerveDriveBase extends Subsystem {
     }
 
     public void initDefaultCommand() {
-        setDefaultCommand(new SwerveTankDrive());
+        setDefaultCommand(new SwerveDrive());
     }
     
     public void tankDrive(double leftValue, double rightValue) {
@@ -68,18 +92,18 @@ public class SwerveDriveBase extends Subsystem {
     	rearLeftWheel.set(leftValue);
     }
     
-    public void swerveDrive(double dirMotion, double strMotion, double rotMotion) {
-    	dirMotion = (dirMotion*(Math.sin(getNavSensor().getAngle()))) + (strMotion*(Math.cos(getNavSensor().getAngle())));
-    	strMotion = -(dirMotion*(Math.cos(getNavSensor().getAngle()))) + (strMotion*(Math.sin(getNavSensor().getAngle())));
+    public void swerveDrive(double FBMotion, double RLMotion, double rotMotion) {
+    	FBMotion = (FBMotion*(Math.sin(getNavSensor().getAngle()))) + (RLMotion*(Math.cos(getNavSensor().getAngle())));
+    	RLMotion = -(FBMotion*(Math.cos(getNavSensor().getAngle()))) + (RLMotion*(Math.sin(getNavSensor().getAngle())));
     	
     	double L = 2.0;
     	double W = 2.0;
     	double R = Math.sqrt((L*L) + (W*W));
     	
-    	double A = strMotion - rotMotion*(L/R);
-    	double B = strMotion + rotMotion*(L/R);
-    	double C = dirMotion - rotMotion*(W/R);
-    	double D = dirMotion + rotMotion*(W/R);
+    	double A = RLMotion - rotMotion*(L/R);
+    	double B = RLMotion + rotMotion*(L/R);
+    	double C = FBMotion - rotMotion*(W/R);
+    	double D = FBMotion + rotMotion*(W/R);
     	
     	double frontRightWheelSpeed = Math.sqrt((B*B) + (C*C));
     	double frontLeftWheelSpeed = Math.sqrt((B*B) + (D*D));
@@ -111,10 +135,10 @@ public class SwerveDriveBase extends Subsystem {
     	rearLeftWheel.set(rearLeftWheelSpeed);
     	rearRightWheel.set(rearRightWheelSpeed);
     	
-    	frontRightSetAngle(frontRightAngle);
-    	frontLeftSetAngle(frontLeftAngle);
-    	rearLeftSetAngle(rearLeftAngle);
-    	rearRightSetAngle(rearRightAngle);
+    	setFrontRightAngle(frontRightAngle);
+    	setFrontLeftAngle(frontLeftAngle);
+    	setRearLeftAngle(rearLeftAngle);
+    	setRearRightAngle(rearRightAngle);
     	
     }
     
@@ -140,24 +164,74 @@ public class SwerveDriveBase extends Subsystem {
     	}
     }
     
-    //TODO: finish method to have swivel motors turn the wheel to a specific angle
-    public void frontRightSetAngle(double angle) {
-    	
+    public Double getFrontRightEncPercent() {
+    	return Math.abs(frontRightEnc.getDistance() / 100.0);
     }
     
-    public void frontLeftSetAngle(double angle) {
-    	
+    public Double getFrontLeftEncPercent() {
+    	return Math.abs(frontLeftEnc.getDistance() / 100.0);
     }
     
-    public void rearRightSetAngle(double angle) {
-    	
+    public Double getRearRightEncPercent() {
+    	return Math.abs(rearRightEnc.getDistance() / 100.0);
     }
     
-    public void rearLeftSetAngle(double angle) {
-    	
+    public Double getRearLeftEncPercent() {
+    	return Math.abs(rearLeftEnc.getDistance() / 100.0);
     }
     
-    //TODO: better names
+    public double getFrontRightAngle(){
+		if (frontRightEnc != null) {
+			return (getFrontRightEncPercent());
+		} else {
+			return -1.0;
+		}
+	}
+    
+    public double getFrontLeftAngle(){
+		if (frontLeftEnc != null) {
+			return (getFrontLeftEncPercent());
+		} else {
+			return -1.0;
+		}
+	}
+    
+    public double getRearRightAngle(){
+		if (rearRightEnc != null) {
+			return (getRearRightEncPercent());
+		} else {
+			return -1.0;
+		}
+	}
+    
+    public double getRearLeftAngle(){
+		if (rearLeftEnc != null) {
+			return (getRearLeftEncPercent());
+		} else {
+			return -1.0;
+		}
+	}
+    
+    public void setFrontRightAngle(double angle) {
+    	frontRightPID.enable();
+    	frontRightPID.setSetpoint(angle);
+    }
+    
+    public void setFrontLeftAngle(double angle) {
+    	frontLeftPID.enable();
+    	frontLeftPID.setSetpoint(angle);
+    }
+    
+    public void setRearRightAngle(double angle) {
+    	rearRightPID.enable();
+    	rearRightPID.setSetpoint(angle);
+    }
+    
+    public void setRearLeftAngle(double angle) {
+    	rearLeftPID.enable();
+    	rearLeftPID.setSetpoint(angle);
+    }
+    
     public void frontRightDrive(double value) {
     	frontRightWheel.set(value);
     }
