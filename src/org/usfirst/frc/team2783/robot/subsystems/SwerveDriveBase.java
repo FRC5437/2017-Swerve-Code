@@ -41,6 +41,9 @@ public class SwerveDriveBase extends Subsystem {
 	private PIDController rearRightPID;
 	private PIDController rearLeftPID;
 	
+	//TODO: Adjust value during testing. Some of this code is copied from 2016 Season Code, this value will change
+	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 875.0;
+	
     public SwerveDriveBase() {
     	super();
     	
@@ -50,11 +53,13 @@ public class SwerveDriveBase extends Subsystem {
     	rearRightEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
     	rearLeftEnc = new Encoder(new DigitalInput(6), new DigitalInput(7));
     	
+    	//Intstantiating PID Controllers with p, i, d, Encoder, Talon
     	frontRightPID = new PIDController(0.1, 0.01, 0, frontRightEnc, frontRightSwivel);
     	frontLeftPID = new PIDController(0.1, 0.01, 0, frontLeftEnc, frontLeftSwivel);
     	rearRightPID = new PIDController(0.1, 0.01, 0, rearRightEnc, rearRightSwivel);
     	rearLeftPID = new PIDController(0.1, 0.01, 0, rearLeftEnc, rearLeftSwivel);
     	
+    	//Makes sure navX is on Robot, then instantiates it 
     	try {
 	         navSensor = new AHRS(SPI.Port.kMXP);
 	     } catch (RuntimeException ex ) {
@@ -78,6 +83,7 @@ public class SwerveDriveBase extends Subsystem {
         setDefaultCommand(new SwerveDrive());
     }
     
+    //Small, simple tank drive method
     public void tankDrive(double leftValue, double rightValue) {
     	if (DriverStation.getInstance().isFMSAttached() && DriverStation.getInstance().getMatchTime() < 4) {
     		setBrake(true);
@@ -92,7 +98,9 @@ public class SwerveDriveBase extends Subsystem {
     	rearLeftWheel.set(leftValue);
     }
     
+    //Method for calculating and setting Speed and Angle of individual wheels given 3 movement inputs
     public void swerveDrive(double FBMotion, double RLMotion, double rotMotion) {
+    	//Swerve Math Taken from: https://www.chiefdelphi.com/media/papers/2426
     	FBMotion = (FBMotion*(Math.sin(getNavSensor().getAngle()))) + (RLMotion*(Math.cos(getNavSensor().getAngle())));
     	RLMotion = -(FBMotion*(Math.cos(getNavSensor().getAngle()))) + (RLMotion*(Math.sin(getNavSensor().getAngle())));
     	
@@ -130,11 +138,13 @@ public class SwerveDriveBase extends Subsystem {
     		rearRightWheelSpeed /= max;
     	}
     	
+    	//Set Wheel Speeds
     	frontRightWheel.set(frontRightWheelSpeed);
     	frontLeftWheel.set(frontLeftWheelSpeed);
     	rearLeftWheel.set(rearLeftWheelSpeed);
     	rearRightWheel.set(rearRightWheelSpeed);
     	
+    	//Set Wheel Angles
     	setFrontRightAngle(frontRightAngle);
     	setFrontLeftAngle(frontLeftAngle);
     	setRearLeftAngle(rearLeftAngle);
@@ -142,6 +152,7 @@ public class SwerveDriveBase extends Subsystem {
     	
     }
     
+    //Turn on/off brake mode
     public void setBrake(boolean brake) {
     	frontRightWheel.enableBrakeMode(brake);
     	frontRightSwivel.enableBrakeMode(brake);
@@ -156,6 +167,7 @@ public class SwerveDriveBase extends Subsystem {
     	rearLeftSwivel.enableBrakeMode(brake);
     }
     
+    //Returns navX sensor, if it exists
     public AHRS getNavSensor() {
     	if (navSensor != null) {
     		return navSensor;
@@ -164,20 +176,21 @@ public class SwerveDriveBase extends Subsystem {
     	}
     }
     
+    //Methods taken from ShooterBase in 2016 Code to help calculate angle
     public Double getFrontRightEncPercent() {
-    	return Math.abs(frontRightEnc.getDistance() / 100.0);
+    	return Math.abs(frontRightEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
     }
     
     public Double getFrontLeftEncPercent() {
-    	return Math.abs(frontLeftEnc.getDistance() / 100.0);
+    	return Math.abs(frontLeftEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
     }
     
     public Double getRearRightEncPercent() {
-    	return Math.abs(rearRightEnc.getDistance() / 100.0);
+    	return Math.abs(rearRightEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
     }
     
     public Double getRearLeftEncPercent() {
-    	return Math.abs(rearLeftEnc.getDistance() / 100.0);
+    	return Math.abs(rearLeftEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
     }
     
     public double getFrontRightAngle(){
@@ -212,6 +225,7 @@ public class SwerveDriveBase extends Subsystem {
 		}
 	}
     
+    //Methods to set Angles of wheels, enables PID then sets its setpoint as the input
     public void setFrontRightAngle(double angle) {
     	frontRightPID.enable();
     	frontRightPID.setSetpoint(angle);
@@ -232,6 +246,7 @@ public class SwerveDriveBase extends Subsystem {
     	rearLeftPID.setSetpoint(angle);
     }
     
+    //General Methods for moving any motor
     public void frontRightDrive(double value) {
     	frontRightWheel.set(value);
     }

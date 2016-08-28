@@ -14,6 +14,7 @@ public class OI {
 	
 	public static Joystick xBoxController = new Joystick(RobotMap.XBOX_CONTROLLER_ID);
 	
+	//In order: L Stick Y Axis, L Stick X Axis, R Stick X Axis
 	Button swerveFB = new JoystickButton(xBoxController, 1);
 	Button swerveRL = new JoystickButton(xBoxController, 0);
 	Button swerveRot = new JoystickButton(xBoxController, 4);
@@ -21,6 +22,7 @@ public class OI {
 	public OI() {
 		swerveFB.whileActive(new SwerveDrive());
 		swerveRL.whileActive(new SwerveDrive());
+		swerveRot.whileActive(new SwerveDrive());
 	}
 	
 }

@@ -20,8 +20,8 @@ public class SwerveDrive extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Double throttleValue = OI.xBoxController.getRawAxis(3) - OI.xBoxController.getRawAxis(2);
     	
+    	//Sets input for swerveDrive method as input from controller stick axes. Note: FBValue is negative as required by doc linked to in swerveDrive method
     	Double FBValue = -(OI.xBoxController.getRawAxis(1));
     	Double RLValue = OI.xBoxController.getRawAxis(0);
     	Double rotValue = OI.xBoxController.getRawAxis(4);
