@@ -47,11 +47,10 @@ public class SwerveDriveBase extends Subsystem {
     public SwerveDriveBase() {
     	super();
     	
-    	//TODO: Correct DInput
-    	frontRightEnc = new Encoder(new DigitalInput(0), new DigitalInput(1));
-    	frontLeftEnc = new Encoder(new DigitalInput(2), new DigitalInput(3));
-    	rearRightEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
-    	rearLeftEnc = new Encoder(new DigitalInput(6), new DigitalInput(7));
+    	frontRightEnc = new Encoder(new DigitalInput(2), new DigitalInput(3));
+        frontLeftEnc = new Encoder(new DigitalInput(0), new DigitalInput(1));
+        rearRightEnc = new Encoder(new DigitalInput(6), new DigitalInput(7));
+        rearLeftEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
     	
     	//Intstantiating PID Controllers with p, i, d, Encoder, Talon
     	frontRightPID = new PIDController(0.1, 0.01, 0, frontRightEnc, frontRightSwivel);
