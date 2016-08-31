@@ -167,7 +167,7 @@ public class SwerveDriveBase extends Subsystem {
     	rearLeftSwivel.enableBrakeMode(brake);
     }
     
-    //Returns navX sensor, if it exists
+    //Returns navX sensor ?
     public AHRS getNavSensor() {
     	if (navSensor != null) {
     		return navSensor;
