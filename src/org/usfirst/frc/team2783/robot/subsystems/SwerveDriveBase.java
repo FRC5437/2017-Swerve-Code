@@ -1,7 +1,7 @@
 package org.usfirst.frc.team2783.robot.subsystems;
 
 import org.usfirst.frc.team2783.robot.RobotMap;
-import org.usfirst.frc.team2783.robot.commands.SwerveDrive;
+import org.usfirst.frc.team2783.robot.commands.SwerveTankDrive;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -54,10 +54,10 @@ public class SwerveDriveBase extends Subsystem {
         rearLeftEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
     	
     	//Intstantiating PID Controllers with p, i, d, Encoder, Talon
-    	frontRightPID = new PIDController(0.1, 0.01, 0, frontRightEnc, frontRightSwivel);
-    	frontLeftPID = new PIDController(0.1, 0.01, 0, frontLeftEnc, frontLeftSwivel);
-    	rearRightPID = new PIDController(0.1, 0.01, 0, rearRightEnc, rearRightSwivel);
-    	rearLeftPID = new PIDController(0.1, 0.01, 0, rearLeftEnc, rearLeftSwivel);
+    	//frontRightPID = new PIDController(0.1, 0.01, 0, frontRightEnc, frontRightSwivel);
+    	//frontLeftPID = new PIDController(0.1, 0.01, 0, frontLeftEnc, frontLeftSwivel);
+    	//rearRightPID = new PIDController(0.1, 0.01, 0, rearRightEnc, rearRightSwivel);
+    	//rearLeftPID = new PIDController(0.1, 0.01, 0, rearLeftEnc, rearLeftSwivel);
     	
     	//Makes sure navX is on Robot, then instantiates it 
     	try {
@@ -80,7 +80,7 @@ public class SwerveDriveBase extends Subsystem {
     }
 
     public void initDefaultCommand() {
-        setDefaultCommand(new SwerveDrive());
+        setDefaultCommand(new SwerveTankDrive());
     }
     
     //Small, simple tank drive method
