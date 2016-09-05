@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -45,6 +46,19 @@ public class SwerveDriveBase extends Subsystem {
 	//TODO: Adjust value during testing. Some of this code is copied from 2016 Season Code, this value will change
 	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 875.0;
 	
+	public class PIDOutputClass implements PIDOutput {
+		public VictorSP motor;
+		
+		public PIDOutputClass(VictorSP motor) {
+			this.motor = motor;
+		}
+		
+		@Override
+		public void pidWrite(double output) {
+			frontRightSwivel.set(output);
+		}
+	}
+	
     public SwerveDriveBase() {
     	super();
     	
@@ -53,11 +67,16 @@ public class SwerveDriveBase extends Subsystem {
         rearRightEnc = new Encoder(new DigitalInput(6), new DigitalInput(7));
         rearLeftEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
     	
-    	//Intstantiating PID Controllers with p, i, d, Encoder, Talon
-    	frontRightPID = new PIDController(0.1, 0.01, 0, frontRightEnc, frontRightSwivel);
-    	frontLeftPID = new PIDController(0.1, 0.01, 0, frontLeftEnc, frontLeftSwivel);
-    	rearRightPID = new PIDController(0.1, 0.01, 0, rearRightEnc, rearRightSwivel);
-    	rearLeftPID = new PIDController(0.1, 0.01, 0, rearLeftEnc, rearLeftSwivel);
+        PIDOutputClass frontRightPIDOutput = new PIDOutputClass(frontRightSwivel);
+        PIDOutputClass frontLeftPIDOutput = new PIDOutputClass(frontRightSwivel);
+        PIDOutputClass rearRightPIDOutput = new PIDOutputClass(frontRightSwivel);
+        PIDOutputClass rearLeftPIDOutput = new PIDOutputClass(frontRightSwivel);
+        
+    	//Intstantiating PID Controllers with p, i, d, Encoder, Victor
+    	frontRightPID = new PIDController(0.1, 0, 0, frontRightEnc, frontRightPIDOutput);
+    	frontLeftPID = new PIDController(0.1, 0, 0, frontLeftEnc, frontLeftPIDOutput);
+    	rearRightPID = new PIDController(0.1, 0, 0, rearRightEnc, rearRightPIDOutput);
+    	rearLeftPID = new PIDController(0.1, 0, 0, rearLeftEnc, rearLeftPIDOutput);
     	
     	//Makes sure navX is on Robot, then instantiates it 
     	try {
