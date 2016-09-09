@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -20,16 +19,16 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class SwerveDriveBase extends Subsystem {
 	private CANTalon frontRightWheel;
-	private VictorSP frontRightSwivel;
+	private CANTalon frontRightSwivel;
 	
 	private CANTalon frontLeftWheel;
-	private VictorSP frontLeftSwivel;
+	private CANTalon frontLeftSwivel;
 	
 	private CANTalon rearRightWheel;
-	private VictorSP rearRightSwivel;
+	private CANTalon rearRightSwivel;
 	
 	private CANTalon rearLeftWheel;
-	private VictorSP rearLeftSwivel;
+	private CANTalon rearLeftSwivel;
 	
 	private AHRS navSensor;
 	
@@ -47,9 +46,9 @@ public class SwerveDriveBase extends Subsystem {
 	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 875.0;
 	
 	public class PIDOutputClass implements PIDOutput {
-		public VictorSP motor;
+		public CANTalon motor;
 		
-		public PIDOutputClass(VictorSP motor) {
+		public PIDOutputClass(CANTalon motor) {
 			this.motor = motor;
 		}
 		
@@ -66,6 +65,11 @@ public class SwerveDriveBase extends Subsystem {
         frontLeftEnc = new Encoder(new DigitalInput(0), new DigitalInput(1));
         rearRightEnc = new Encoder(new DigitalInput(6), new DigitalInput(7));
         rearLeftEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
+        
+        frontRightSwivel = new CANTalon(RobotMap.FRONT_RIGHT_SWIVEL);
+        frontLeftSwivel = new CANTalon(RobotMap.FRONT_LEFT_SWIVEL);
+        rearRightSwivel = new CANTalon(RobotMap.REAR_RIGHT_SWIVEL);
+        rearLeftSwivel = new CANTalon(RobotMap.REAR_LEFT_SWIVEL);
     	
         PIDOutputClass frontRightPIDOutput = new PIDOutputClass(frontRightSwivel);
         PIDOutputClass frontLeftPIDOutput = new PIDOutputClass(frontRightSwivel);
@@ -86,16 +90,16 @@ public class SwerveDriveBase extends Subsystem {
 	     }
     	
     	frontRightWheel = new CANTalon(RobotMap.FRONT_RIGHT_WHEEL);
-    	frontRightSwivel = new VictorSP(RobotMap.FRONT_RIGHT_SWIVEL);
+    	frontRightSwivel = new CANTalon(RobotMap.FRONT_RIGHT_SWIVEL);
     	
     	frontLeftWheel = new CANTalon(RobotMap.FRONT_LEFT_WHEEL);
-    	frontLeftSwivel = new VictorSP(RobotMap.FRONT_LEFT_SWIVEL);
+    	frontLeftSwivel = new CANTalon(RobotMap.FRONT_LEFT_SWIVEL);
     	
     	rearRightWheel = new CANTalon(RobotMap.REAR_RIGHT_WHEEL);
-    	rearRightSwivel = new VictorSP(RobotMap.REAR_RIGHT_SWIVEL);
+    	rearRightSwivel = new CANTalon(RobotMap.REAR_RIGHT_SWIVEL);
     	
     	rearLeftWheel = new CANTalon(RobotMap.REAR_LEFT_WHEEL);
-    	rearLeftSwivel = new VictorSP(RobotMap.REAR_LEFT_SWIVEL);
+    	rearLeftSwivel = new CANTalon(RobotMap.REAR_LEFT_SWIVEL);
     }
 
     public void initDefaultCommand() {
