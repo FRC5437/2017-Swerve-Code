@@ -1,7 +1,7 @@
 
 package org.usfirst.frc.team2783.robot;
 
-import org.usfirst.frc.team2783.robot.subsystems.SwerveDriveBase;
+import org.usfirst.frc.team2783.robot.subsystems.OneVictor;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class Robot extends IterativeRobot {
 	
-	public static final SwerveDriveBase swerveBase = new SwerveDriveBase();
+	public static final OneVictor victorBase = new OneVictor();
 
 	public static OI oi;
 

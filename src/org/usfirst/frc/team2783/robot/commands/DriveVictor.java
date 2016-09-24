@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SwerveTankDrive extends Command {
+public class DriveVictor extends Command {
 
-    public SwerveTankDrive() {
-        requires(Robot.swerveBase);
+    public DriveVictor() {
+        requires(Robot.victorBase);
     }
 
     // Called just before this Command runs the first time
@@ -20,13 +20,8 @@ public class SwerveTankDrive extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Double throttleValue = OI.xBoxController.getRawAxis(3) - OI.xBoxController.getRawAxis(2);
-    	Double skewValue = OI.xBoxController.getRawAxis(0);
+    	Robot.victorBase.driveVictor(OI.xBoxController.getRawAxis(1));
     	
-    	Double leftOutput = -(throttleValue + (throttleValue * skewValue));
-    	Double rightOutput = throttleValue - (throttleValue * skewValue);
-    	
-    	Robot.swerveBase.tankDrive(leftOutput, rightOutput);
     }
 
     // Make this return true when this Command no longer needs to run execute()

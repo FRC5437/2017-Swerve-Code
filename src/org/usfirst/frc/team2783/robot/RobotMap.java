@@ -9,14 +9,6 @@ public class RobotMap {
 	
 	final public static int XBOX_CONTROLLER_ID = 0;
 	
-	final public static int FRONT_LEFT_WHEEL = 0;
-	final public static int FRONT_RIGHT_WHEEL = 1;
-	final public static int REAR_LEFT_WHEEL = 2;
-	final public static int REAR_RIGHT_WHEEL = 3;
-	
-	final public static int FRONT_LEFT_SWIVEL = 4;
-	final public static int FRONT_RIGHT_SWIVEL = 5;
-	final public static int REAR_LEFT_SWIVEL = 6;
-	final public static int REAR_RIGHT_SWIVEL = 7;
+	final public static int VICTOR = 1;
 	
 }
