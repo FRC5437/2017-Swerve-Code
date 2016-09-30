@@ -43,6 +43,10 @@ public class SwerveDriveBase extends Subsystem {
 	private PIDController rearRightPID;
 	private PIDController rearLeftPID;
 	
+	private final double p = 0.05;    //0.015;
+	private final double i = 0.0025;    //0.005;
+	private final double d = 0.005;    //0.125;
+	
 	//TODO: Adjust value during testing. Some of this code is copied from 2016 Season Code, this value will change
 	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 875.0;
 	
@@ -74,10 +78,10 @@ public class SwerveDriveBase extends Subsystem {
         PIDOutputClass rearLeftPIDOutput = new PIDOutputClass(new VictorSP(RobotMap.REAR_LEFT_SWIVEL));
         
     	//Intstantiating PID Controllers with p, i, d, Encoder, Victor
-    	frontRightPID = new PIDController(0.1, 0, 0, frontRightEnc, frontRightPIDOutput);
-    	frontLeftPID = new PIDController(0.1, 0, 0, frontLeftEnc, frontLeftPIDOutput);
-    	rearRightPID = new PIDController(0.1, 0, 0, rearRightEnc, rearRightPIDOutput);
-    	rearLeftPID = new PIDController(0.1, 0, 0, rearLeftEnc, rearLeftPIDOutput);
+    	frontRightPID = new PIDController(p, i, d, frontRightEnc, frontRightPIDOutput);
+    	frontLeftPID = new PIDController(p, i, d, frontLeftEnc, frontLeftPIDOutput);
+    	rearRightPID = new PIDController(p, i, d, rearRightEnc, rearRightPIDOutput);
+    	rearLeftPID = new PIDController(p, i, d, rearLeftEnc, rearLeftPIDOutput);
     	
     	//Makes sure navX is on Robot, then instantiates it 
     	try {
@@ -124,8 +128,8 @@ public class SwerveDriveBase extends Subsystem {
     	FBMotion = (FBMotion*(Math.sin(getNavSensor().getAngle()))) + (RLMotion*(Math.cos(getNavSensor().getAngle())));
     	RLMotion = -(FBMotion*(Math.cos(getNavSensor().getAngle()))) + (RLMotion*(Math.sin(getNavSensor().getAngle())));
     	
-    	double L = 2.0;
-    	double W = 2.0;
+    	double L = 14.0;
+    	double W = 18.0;
     	double R = Math.sqrt((L*L) + (W*W));
     	
     	double A = RLMotion - rotMotion*(L/R);
