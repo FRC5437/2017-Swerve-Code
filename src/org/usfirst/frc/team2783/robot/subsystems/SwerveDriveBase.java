@@ -59,7 +59,6 @@ public class SwerveDriveBase extends Subsystem {
 		
 		@Override
 		public void pidWrite(double output) {
-			System.out.println("output: " + output);
 			motor.set(output);
 		}
 	}
@@ -82,6 +81,11 @@ public class SwerveDriveBase extends Subsystem {
     	frontLeftPID = new PIDController(p, i, d, frontLeftEnc, frontLeftPIDOutput);
     	rearRightPID = new PIDController(p, i, d, rearRightEnc, rearRightPIDOutput);
     	rearLeftPID = new PIDController(p, i, d, rearLeftEnc, rearLeftPIDOutput);
+    	
+    	frontRightPID.setContinuous();
+    	frontLeftPID.setContinuous();
+    	rearRightPID.setContinuous();
+    	rearLeftPID.setContinuous();
     	
     	//Makes sure navX is on Robot, then instantiates it 
     	try {
@@ -125,11 +129,11 @@ public class SwerveDriveBase extends Subsystem {
     //Method for calculating and setting Speed and Angle of individual wheels given 3 movement inputs
     public void swerveDrive(double FBMotion, double RLMotion, double rotMotion) {
     	//Swerve Math Taken from: https://www.chiefdelphi.com/media/papers/2426
-    	FBMotion = (FBMotion*(Math.sin(getNavSensor().getAngle()))) + (RLMotion*(Math.cos(getNavSensor().getAngle())));
-    	RLMotion = -(FBMotion*(Math.cos(getNavSensor().getAngle()))) + (RLMotion*(Math.sin(getNavSensor().getAngle())));
+    	//FBMotion = (FBMotion*(Math.sin(getNavSensor().getAngle()))) + (RLMotion*(Math.cos(getNavSensor().getAngle())));
+    	//RLMotion = -(FBMotion*(Math.cos(getNavSensor().getAngle()))) + (RLMotion*(Math.sin(getNavSensor().getAngle())));
     	
-    	double L = 14.0;
-    	double W = 18.0;
+    	double L = 1.0;
+    	double W = 1.0;
     	double R = Math.sqrt((L*L) + (W*W));
     	
     	double A = RLMotion - rotMotion*(L/R);
@@ -144,10 +148,10 @@ public class SwerveDriveBase extends Subsystem {
     	
     	double t = 180/Math.PI;
     	
-    	double frontRightAngle = Math.atan2(B, C)*t;
-    	double frontLeftAngle = Math.atan2(B, D)*t;
+    	double frontRightAngle = Math.atan2(B, D)*t;
+    	double frontLeftAngle = Math.atan2(B, C)*t;
     	double rearLeftAngle = Math.atan2(A, C)*t;
-    	double rearRightAngle = Math.atan2(A, C)*t;
+    	double rearRightAngle = Math.atan2(A, D)*t;
     	 
     	double max = frontRightWheelSpeed;
     	if(max < frontLeftWheelSpeed) {max = frontLeftWheelSpeed;}
@@ -249,6 +253,7 @@ public class SwerveDriveBase extends Subsystem {
     public void setFrontRightAngle(double angle) {
     	frontRightPID.enable();
     	frontRightPID.setSetpoint(angle);
+    	System.out.println("out angle: " + frontRightPID.getSetpoint());
     }
     
     public void setFrontLeftAngle(double angle) {
