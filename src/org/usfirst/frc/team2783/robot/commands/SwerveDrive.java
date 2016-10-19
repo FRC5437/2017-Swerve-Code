@@ -28,11 +28,9 @@ public class SwerveDrive extends Command {
     	
     	if (FBValue > -.2 && FBValue < .2){
     		FBValue = 0.0;
-    	}
-    	if (RLValue > -.2 && RLValue < .2){
+    	} if (RLValue > -.2 && RLValue < .2){
     		RLValue = 0.0;
-    	}
-    	if (rotValue > -.1 && rotValue < .1){
+    	} if (rotValue > -.1 && rotValue < .1){
     		rotValue = 0.0;
     	}
     	Robot.swerveBase.swerveDrive(FBValue, RLValue, rotValue);
