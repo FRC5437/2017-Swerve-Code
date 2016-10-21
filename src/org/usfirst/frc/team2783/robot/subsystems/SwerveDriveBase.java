@@ -1,6 +1,5 @@
 package org.usfirst.frc.team2783.robot.subsystems;
 
-import org.usfirst.frc.team2783.robot.OI;
 import org.usfirst.frc.team2783.robot.RobotMap;
 import org.usfirst.frc.team2783.robot.commands.SwerveDrive;
 
@@ -82,11 +81,6 @@ public class SwerveDriveBase extends Subsystem {
     	frontLeftPID = new PIDController(p, i, d, frontLeftEnc, frontLeftPIDOutput);
     	rearRightPID = new PIDController(p, i, d, rearRightEnc, rearRightPIDOutput);
     	rearLeftPID = new PIDController(p, i, d, rearLeftEnc, rearLeftPIDOutput);
-    	
-    	frontRightPID.setInputRange(-180, 180);
-    	frontLeftPID.setInputRange(-180, 180);
-    	rearRightPID.setInputRange(-180, 180);
-    	rearLeftPID.setInputRange(-180, 180);
     	
     	frontRightPID.setContinuous();
     	frontLeftPID.setContinuous();
@@ -171,23 +165,6 @@ public class SwerveDriveBase extends Subsystem {
     		rearLeftWheelSpeed /= max;
     		rearRightWheelSpeed /= max;
     	}
-    	
-    	double currentFBValue = OI.xBoxController.getRawAxis(1);
-    	
-    	if (lastRLValue == 0 && lastFBValue == 0 && currentFBValue != Math.abs(currentFBValue)) {
-    		frontRightWheelSpeed = -frontRightWheelSpeed;
-    		frontLeftWheelSpeed = -frontLeftWheelSpeed;
-    		rearLeftWheelSpeed = -rearLeftWheelSpeed;
-    		rearRightWheelSpeed = -rearRightWheelSpeed;
-    		
-    		frontRightAngle = -frontRightAngle;
-    		frontLeftAngle = -frontLeftAngle;
-    		rearLeftAngle = -rearLeftAngle;
-    		rearRightAngle = -rearRightAngle;
-    	}
-    	
-    	lastFBValue = OI.xBoxController.getRawAxis(1);
-    	lastRLValue = OI.xBoxController.getRawAxis(0);
     	
     	//Set Wheel Speeds
     	frontRightWheel.set(frontRightWheelSpeed);
