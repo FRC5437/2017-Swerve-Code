@@ -175,55 +175,55 @@ public class SwerveDriveBase extends Subsystem {
     }
     
     //Method for calculating and setting Speed and Angle of individual wheels given 3 movement inputs
-    public void swerveDrive(double FBMotion, double RLMotion, double rotMotion) {
+    public void swerveDrive(double fbMot, double rlMot, double rotMot) {
     	//Swerve Math Taken from: https://www.chiefdelphi.com/media/papers/2426
-    	//FBMotion = (FBMotion*(Math.sin(getNavSensor().getAngle()))) + (RLMotion*(Math.cos(getNavSensor().getAngle())));
-    	//RLMotion = -(FBMotion*(Math.cos(getNavSensor().getAngle()))) + (RLMotion*(Math.sin(getNavSensor().getAngle())));
+    	//fbMot = (fbMot*(Math.sin(getNavSensor().getAngle()))) + (rlMot*(Math.cos(getNavSensor().getAngle())));
+    	//rlMot = -(fbMot*(Math.cos(getNavSensor().getAngle()))) + (rlMot*(Math.sin(getNavSensor().getAngle())));
     	
     	double L = 1.0;
     	double W = 1.0;
     	double R = Math.sqrt((L*L) + (W*W));
     	
-    	double A = RLMotion - rotMotion*(L/R);
-    	double B = RLMotion + rotMotion*(L/R);
-    	double C = FBMotion - rotMotion*(W/R);
-    	double D = FBMotion + rotMotion*(W/R);
+    	double A = rlMot - rotMot*(L/R);
+    	double B = rlMot + rotMot*(L/R);
+    	double C = fbMot - rotMot*(W/R);
+    	double D = fbMot + rotMot*(W/R);
     	
-    	double FRWheelSpeed = Math.sqrt((B*B) + (C*C));
-    	double FLWheelSpeed = Math.sqrt((B*B) + (D*D));
-    	double RLWheelSpeed = Math.sqrt((A*A) + (D*D));
-    	double RRWheelSpeed = Math.sqrt((A*A) + (C*C));
+    	double frSpd = Math.sqrt((B*B) + (C*C));
+    	double flSpd = Math.sqrt((B*B) + (D*D));
+    	double rlSpd = Math.sqrt((A*A) + (D*D));
+    	double rrSpd = Math.sqrt((A*A) + (C*C));
     	
     	double t = 180/Math.PI;
     	
-    	double FRAngle = Math.atan2(B, D)*t;
-    	double FLAngle = Math.atan2(B, C)*t;
-    	double RLAngle = Math.atan2(A, C)*t;
-    	double RRAngle = Math.atan2(A, D)*t;
+    	double frAng = Math.atan2(B, D)*t;
+    	double flAng = Math.atan2(B, C)*t;
+    	double rlAng = Math.atan2(A, C)*t;
+    	double rrAng = Math.atan2(A, D)*t;
     	 
-    	double max = FRWheelSpeed;
-    	if(max < FLWheelSpeed) {max = FLWheelSpeed;}
-    	if(max < RLWheelSpeed) {max = RLWheelSpeed;}
-    	if(max < RRWheelSpeed) {max = RRWheelSpeed;}
+    	double max = frSpd;
+    	if(max < flSpd) max = flSpd;
+    	if(max < rlSpd) max = rlSpd;
+    	if(max < rrSpd) max = rrSpd;
     	//I'm so sorry Jake
     	
     	if(max > 1) {
-    		FRWheelSpeed /= max;
-    		FLWheelSpeed /= max;
-    		RLWheelSpeed /= max;
-    		RRWheelSpeed /= max;
+    		frSpd /= max;
+    		flSpd /= max;
+    		rlSpd /= max;
+    		rrSpd /= max;
     	}
     	
-    	if(FRAngle < 0) FRAngle += 360;
-    	if(FLAngle < 0) FLAngle += 360;
-    	if(RRAngle < 0) RRAngle += 360;
-    	if(RLAngle < 0) RLAngle += 360;
+    	if(frAng < 0) frAng += 360;
+    	if(flAng < 0) flAng += 360;
+    	if(rrAng < 0) rrAng += 360;
+    	if(rlAng < 0) rlAng += 360;
     	
     	//Set Wheel Speeds and Angles
-    	frMod.setModule(FRAngle, FRWheelSpeed);
-    	flMod.setModule(FLAngle, FLWheelSpeed);
-    	rrMod.setModule(RRAngle, RRWheelSpeed);
-    	rlMod.setModule(RLAngle, RLWheelSpeed);
+    	frMod.setModule(frAng, frSpd);
+    	flMod.setModule(flAng, flSpd);
+    	rrMod.setModule(rrAng, rrSpd);
+    	rlMod.setModule(rlAng, rlSpd);
     	
     }
     
