@@ -19,39 +19,22 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  *
  */
 public class SwerveDriveBase extends Subsystem {
-	private CANTalon frontRightWheel;
-	private VictorSP frontRightSwivel;
 	
-	private CANTalon frontLeftWheel;
-	private VictorSP frontLeftSwivel;
-	
-	private CANTalon rearRightWheel;
-	private VictorSP rearRightSwivel;
-	
-	private CANTalon rearLeftWheel;
-	private VictorSP rearLeftSwivel;
+	private SwerveModule frMod;
+	private SwerveModule flMod;
+	private SwerveModule rrMod;
+	private SwerveModule rlMod;
 	
 	private AHRS navSensor;
-	
-	private Encoder frontRightEnc;
-	private Encoder frontLeftEnc;
-	private Encoder rearRightEnc;
-	private Encoder rearLeftEnc;
-	
-	private PIDController frontRightPID;
-	private PIDController frontLeftPID;
-	private PIDController rearRightPID;
-	private PIDController rearLeftPID;
 	
 	private final double p = 0.05;    //0.015;
 	private final double i = 0.0025;    //0.005;
 	private final double d = 0.005;    //0.125;
 	
-	//TODO: Adjust value during testing. Some of this code is copied from 2016 Season Code, this value will change
 	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 875.0;
 	
 	public class PIDOutputClass implements PIDOutput {
-		public VictorSP motor;
+		private VictorSP motor;
 		
 		public PIDOutputClass(VictorSP motor) {
 			this.motor = motor;
@@ -63,29 +46,81 @@ public class SwerveDriveBase extends Subsystem {
 		}
 	}
 	
+	public class SwerveModule {
+		
+		VictorSP swivelMot;
+		CANTalon driveMot;
+		Encoder enc;
+		PIDController pidCont;
+		PIDOutputClass pidOut;
+		
+		public SwerveModule(
+				VictorSP swivelMot,
+				CANTalon driveMot,
+				Encoder enc) {
+			
+			this.swivelMot = swivelMot;
+			this.driveMot = driveMot;
+			this.enc = enc;
+			
+			this.pidOut = new PIDOutputClass(
+							this.swivelMot
+						);
+			
+			this.pidCont = new PIDController(
+							p, i, d,
+							this.enc,
+							this.pidOut
+						);
+			
+			pidCont.setInputRange(0, 360);
+			pidCont.setContinuous();
+		}
+		
+		public void setModule(double speed, double angle) {
+			double curAngle = getAngle();
+	    	if(Math.abs(angle - curAngle) > 90 && Math.abs(angle - curAngle) < 270) {
+	    		angle = (angle + 180)%360;
+	    		speed = -speed;
+	    	}
+	    	
+	    	setAngle(angle);
+	    	setSpeed(speed);
+		}
+		
+		public void setAngle(double angle) {
+			pidCont.enable();
+			pidCont.setSetpoint(angle);
+		}
+
+		public void setSpeed(double speed) {
+			driveMot.set(speed);
+		}
+		
+		public void setSwivel(double speed) {
+			swivelMot.set(speed);
+		}
+
+		public double getEncPercent() {
+			return Math.abs(enc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
+		}
+		
+		public double getAngle() {
+			if (enc != null) {
+				return (getEncPercent());
+			} else {
+				return -1.0;
+			}
+		}
+		
+		public void setBrake(boolean bool) {
+			driveMot.enableBrakeMode(bool);
+		}
+		
+	}
+	
     public SwerveDriveBase() {
     	super();
-    	
-    	frontRightEnc = new Encoder(new DigitalInput(2), new DigitalInput(3));
-        frontLeftEnc = new Encoder(new DigitalInput(0), new DigitalInput(1));
-        rearRightEnc = new Encoder(new DigitalInput(6), new DigitalInput(7));
-        rearLeftEnc = new Encoder(new DigitalInput(4), new DigitalInput(5));
-    	
-        PIDOutputClass frontRightPIDOutput = new PIDOutputClass(new VictorSP(RobotMap.FRONT_RIGHT_SWIVEL));
-        PIDOutputClass frontLeftPIDOutput = new PIDOutputClass(new VictorSP(RobotMap.FRONT_LEFT_SWIVEL));
-        PIDOutputClass rearRightPIDOutput = new PIDOutputClass(new VictorSP(RobotMap.REAR_RIGHT_SWIVEL));
-        PIDOutputClass rearLeftPIDOutput = new PIDOutputClass(new VictorSP(RobotMap.REAR_LEFT_SWIVEL));
-        
-    	//Intstantiating PID Controllers with p, i, d, Encoder, Victor
-    	frontRightPID = new PIDController(p, i, d, frontRightEnc, frontRightPIDOutput);
-    	frontLeftPID = new PIDController(p, i, d, frontLeftEnc, frontLeftPIDOutput);
-    	rearRightPID = new PIDController(p, i, d, rearRightEnc, rearRightPIDOutput);
-    	rearLeftPID = new PIDController(p, i, d, rearLeftEnc, rearLeftPIDOutput);
-    	
-    	frontRightPID.setContinuous();
-    	frontLeftPID.setContinuous();
-    	rearRightPID.setContinuous();
-    	rearLeftPID.setContinuous();
     	
     	//Makes sure navX is on Robot, then instantiates it 
     	try {
@@ -94,17 +129,30 @@ public class SwerveDriveBase extends Subsystem {
 	         DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
 	     }
     	
-    	frontRightWheel = new CANTalon(RobotMap.FRONT_RIGHT_WHEEL);
-    	//frontRightSwivel = new VictorSP(RobotMap.FRONT_RIGHT_SWIVEL);
+    	frMod = new SwerveModule(
+    					new VictorSP(RobotMap.FRONT_RIGHT_SWIVEL),
+    					new CANTalon(RobotMap.FRONT_RIGHT_WHEEL),
+    					new Encoder(new DigitalInput(2), new DigitalInput(3))
+    				);
     	
-    	frontLeftWheel = new CANTalon(RobotMap.FRONT_LEFT_WHEEL);
-    	//frontLeftSwivel = new VictorSP(RobotMap.FRONT_LEFT_SWIVEL);
+    	flMod = new SwerveModule(
+    					new VictorSP(RobotMap.FRONT_LEFT_SWIVEL),
+    					new CANTalon(RobotMap.FRONT_LEFT_WHEEL),
+    					new Encoder(new DigitalInput(0), new DigitalInput(1))
+    				);
     	
-    	rearRightWheel = new CANTalon(RobotMap.REAR_RIGHT_WHEEL);
-    	//rearRightSwivel = new VictorSP(RobotMap.REAR_RIGHT_SWIVEL);
+    	rrMod = new SwerveModule(
+    					new VictorSP(RobotMap.REAR_RIGHT_SWIVEL),
+    					new CANTalon(RobotMap.REAR_LEFT_WHEEL),
+    					new Encoder(new DigitalInput(6), new DigitalInput(7))
+    				);
+    			
+    	rlMod = new SwerveModule(
+    					new VictorSP(RobotMap.REAR_LEFT_SWIVEL),
+    					new CANTalon(RobotMap.REAR_LEFT_WHEEL),
+    					new Encoder(new DigitalInput(4), new DigitalInput(5))
+    				); // ):
     	
-    	rearLeftWheel = new CANTalon(RobotMap.REAR_LEFT_WHEEL);
-    	//rearLeftSwivel = new VictorSP(RobotMap.REAR_LEFT_SWIVEL);
     }
 
     public void initDefaultCommand() {
@@ -114,16 +162,16 @@ public class SwerveDriveBase extends Subsystem {
     //Small, simple tank drive method
     public void tankDrive(double leftValue, double rightValue) {
     	if (DriverStation.getInstance().isFMSAttached() && DriverStation.getInstance().getMatchTime() < 4) {
-    		setBrake(true);
+    		setRobotBrake(true);
     	} else {
-    		setBrake(false);
+    		setRobotBrake(false);
     	}
     	
-    	frontRightWheel.set(rightValue);
-    	rearRightWheel.set(rightValue);
+    	frMod.setSpeed(rightValue);
+    	rrMod.setSpeed(rightValue);
     	
-    	frontLeftWheel.set(leftValue);
-    	rearLeftWheel.set(leftValue);
+    	flMod.setSpeed(leftValue);
+    	rlMod.setSpeed(leftValue);
     }
     
     //Method for calculating and setting Speed and Angle of individual wheels given 3 movement inputs
@@ -141,54 +189,42 @@ public class SwerveDriveBase extends Subsystem {
     	double C = FBMotion - rotMotion*(W/R);
     	double D = FBMotion + rotMotion*(W/R);
     	
-    	double frontRightWheelSpeed = Math.sqrt((B*B) + (C*C));
-    	double frontLeftWheelSpeed = Math.sqrt((B*B) + (D*D));
-    	double rearLeftWheelSpeed = Math.sqrt((A*A) + (D*D));
-    	double rearRightWheelSpeed = Math.sqrt((A*A) + (C*C));
+    	double FRWheelSpeed = Math.sqrt((B*B) + (C*C));
+    	double FLWheelSpeed = Math.sqrt((B*B) + (D*D));
+    	double RLWheelSpeed = Math.sqrt((A*A) + (D*D));
+    	double RRWheelSpeed = Math.sqrt((A*A) + (C*C));
     	
     	double t = 180/Math.PI;
     	
-    	double frontRightAngle = Math.atan2(B, D)*t;
-    	double frontLeftAngle = Math.atan2(B, C)*t;
-    	double rearLeftAngle = Math.atan2(A, C)*t;
-    	double rearRightAngle = Math.atan2(A, D)*t;
+    	double FRAngle = Math.atan2(B, D)*t;
+    	double FLAngle = Math.atan2(B, C)*t;
+    	double RLAngle = Math.atan2(A, C)*t;
+    	double RRAngle = Math.atan2(A, D)*t;
     	 
-    	double max = frontRightWheelSpeed;
-    	if(max < frontLeftWheelSpeed) {max = frontLeftWheelSpeed;}
-    	if(max < rearLeftWheelSpeed) {max = rearLeftWheelSpeed;}
-    	if(max < rearRightWheelSpeed) {max = rearRightWheelSpeed;}
+    	double max = FRWheelSpeed;
+    	if(max < FLWheelSpeed) {max = FLWheelSpeed;}
+    	if(max < RLWheelSpeed) {max = RLWheelSpeed;}
+    	if(max < RRWheelSpeed) {max = RRWheelSpeed;}
     	//I'm so sorry Jake
     	
     	if(max > 1) {
-    		frontRightWheelSpeed /= max;
-    		frontLeftWheelSpeed /= max;
-    		rearLeftWheelSpeed /= max;
-    		rearRightWheelSpeed /= max;
+    		FRWheelSpeed /= max;
+    		FLWheelSpeed /= max;
+    		RLWheelSpeed /= max;
+    		RRWheelSpeed /= max;
     	}
     	
-    	//Set Wheel Speeds
-    	frontRightWheel.set(frontRightWheelSpeed);
-    	frontLeftWheel.set(frontLeftWheelSpeed);
-    	rearLeftWheel.set(rearLeftWheelSpeed);
-    	rearRightWheel.set(rearRightWheelSpeed);
+    	if(FRAngle < 0) FRAngle += 360;
+    	if(FLAngle < 0) FLAngle += 360;
+    	if(RRAngle < 0) RRAngle += 360;
+    	if(RLAngle < 0) RLAngle += 360;
     	
-    	//Set Wheel Angles
-    	setFrontRightAngle(frontRightAngle);
-    	setFrontLeftAngle(frontLeftAngle);
-    	setRearLeftAngle(rearLeftAngle);
-    	setRearRightAngle(rearRightAngle);
+    	//Set Wheel Speeds and Angles
+    	frMod.setModule(FRAngle, FRWheelSpeed);
+    	flMod.setModule(FLAngle, FLWheelSpeed);
+    	rrMod.setModule(RRAngle, RRWheelSpeed);
+    	rlMod.setModule(RLAngle, RLWheelSpeed);
     	
-    }
-    
-    //Turn on/off brake mode
-    public void setBrake(boolean brake) {
-    	frontRightWheel.enableBrakeMode(brake);
-    	
-    	frontLeftWheel.enableBrakeMode(brake);
-    	
-    	rearRightWheel.enableBrakeMode(brake);
-    	
-    	rearLeftWheel.enableBrakeMode(brake);
     }
     
     //Returns navX sensor ?
@@ -200,109 +236,11 @@ public class SwerveDriveBase extends Subsystem {
     	}
     }
     
-    //Methods taken from ShooterBase in 2016 Code to help calculate angle
-    public Double getFrontRightEncPercent() {
-    	return Math.abs(frontRightEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
-    }
-    
-    public Double getFrontLeftEncPercent() {
-    	return Math.abs(frontLeftEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
-    }
-    
-    public Double getRearRightEncPercent() {
-    	return Math.abs(rearRightEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
-    }
-    
-    public Double getRearLeftEncPercent() {
-    	return Math.abs(rearLeftEnc.getDistance() / ENCODER_TICKS_FOR_ADJUSTER_TRAVEL);
-    }
-    
-    public double getFrontRightAngle(){
-		if (frontRightEnc != null) {
-			return (getFrontRightEncPercent());
-		} else {
-			return -1.0;
-		}
-	}
-    
-    public double getFrontLeftAngle(){
-		if (frontLeftEnc != null) {
-			return (getFrontLeftEncPercent());
-		} else {
-			return -1.0;
-		}
-	}
-    
-    public double getRearRightAngle(){
-		if (rearRightEnc != null) {
-			return (getRearRightEncPercent());
-		} else {
-			return -1.0;
-		}
-	}
-    
-    public double getRearLeftAngle(){
-		if (rearLeftEnc != null) {
-			return (getRearLeftEncPercent());
-		} else {
-			return -1.0;
-		}
-	}
-    
-    //Methods to set Angles of wheels, enables PID then sets its setpoint as the input
-    public void setFrontRightAngle(double angle) {
-    	frontRightPID.enable();
-    	frontRightPID.setSetpoint(angle);
-    	System.out.println("out angle: " + frontRightPID.getSetpoint());
-    }
-    
-    public void setFrontLeftAngle(double angle) {
-    	frontLeftPID.enable();
-    	frontLeftPID.setSetpoint(angle);
-    	System.out.println(angle);
-    }
-    
-    public void setRearRightAngle(double angle) {
-    	rearRightPID.enable();
-    	rearRightPID.setSetpoint(angle);
-    }
-    
-    public void setRearLeftAngle(double angle) {
-    	rearLeftPID.enable();
-    	rearLeftPID.setSetpoint(angle);
-    }
-    
-    //General Methods for moving any motor
-    public void frontRightDrive(double value) {
-    	frontRightWheel.set(value);
-    }
-    
-    public void frontRightTwist(double value) {
-    	frontRightSwivel.set(value);
-    }
-    
-    public void frontLeftDrive(double value) {
-    	frontLeftWheel.set(value);
-    }
-    
-    public void frontLeftTwist(double value) {
-    	frontLeftSwivel.set(value);
-    }
-    
-    public void rearRightDrive(double value) {
-    	rearRightWheel.set(value);
-    }
-    
-    public void rearRightTwist(double value) {
-    	rearRightSwivel.set(value);
-    }
-    
-    public void rearLeftDrive(double value) {
-    	rearLeftWheel.set(value);
-    }
-    
-    public void rearLeftTwift(double value) {
-    	rearLeftSwivel.set(value);
+    public void setRobotBrake(boolean bool) {
+    	frMod.setBrake(bool);
+    	flMod.setBrake(bool);
+    	rrMod.setBrake(bool);
+    	rlMod.setBrake(bool);
     }
     
 }
