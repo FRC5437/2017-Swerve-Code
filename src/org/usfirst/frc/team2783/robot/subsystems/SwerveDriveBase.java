@@ -132,25 +132,29 @@ public class SwerveDriveBase extends Subsystem {
     	frMod = new SwerveModule(
     					new VictorSP(RobotMap.FRONT_RIGHT_SWIVEL),
     					new CANTalon(RobotMap.FRONT_RIGHT_WHEEL),
-    					new Encoder(new DigitalInput(2), new DigitalInput(3))
+    					new Encoder(new DigitalInput(2), 
+    								new DigitalInput(3))
     				);
     	
     	flMod = new SwerveModule(
     					new VictorSP(RobotMap.FRONT_LEFT_SWIVEL),
     					new CANTalon(RobotMap.FRONT_LEFT_WHEEL),
-    					new Encoder(new DigitalInput(0), new DigitalInput(1))
+    					new Encoder(new DigitalInput(0), 
+    								new DigitalInput(1))
     				);
     	
     	rrMod = new SwerveModule(
     					new VictorSP(RobotMap.REAR_RIGHT_SWIVEL),
     					new CANTalon(RobotMap.REAR_LEFT_WHEEL),
-    					new Encoder(new DigitalInput(6), new DigitalInput(7))
+    					new Encoder(new DigitalInput(6), 
+    								new DigitalInput(7))
     				);
     			
     	rlMod = new SwerveModule(
     					new VictorSP(RobotMap.REAR_LEFT_SWIVEL),
     					new CANTalon(RobotMap.REAR_LEFT_WHEEL),
-    					new Encoder(new DigitalInput(4), new DigitalInput(5))
+    					new Encoder(new DigitalInput(4), 
+    								new DigitalInput(5))
     				); // ):
     	
     }
