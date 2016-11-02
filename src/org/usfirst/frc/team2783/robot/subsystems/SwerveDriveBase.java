@@ -63,27 +63,34 @@ public class SwerveDriveBase extends Subsystem {
 			this.driveMot = driveMot;
 			this.enc = enc;
 			
-			this.pidOut = new PIDOutputClass(
-							this.swivelMot
+			pidOut = new PIDOutputClass(
+							swivelMot
 						);
 			
-			this.pidCont = new PIDController(
+			pidCont = new PIDController(
 							p, i, d,
-							this.enc,
-							this.pidOut
+							enc,
+							pidOut
 						);
 			
 			pidCont.setInputRange(0, 360);
-			pidCont.setContinuous();
+			//pidCont.setContinuous();
 		}
 		
-		public void setModule(double speed, double angle) {
+		public void setModule(double angle, double speed) {
+			
+			if(angle < 0) {
+				angle += 360;
+			}
+			
 			double curAngle = getAngle();
 	    	if(Math.abs(angle - curAngle) > 90 && Math.abs(angle - curAngle) < 270) {
-	    		angle = (angle + 180)%360;
+	    		angle = ((int)angle + 180)%360;
 	    		speed = -speed;
 	    	}
 	    	
+	    	System.out.println("angle: " + angle);
+	    	System.out.println("speed: " + speed);
 	    	setAngle(angle);
 	    	setSpeed(speed);
 		}
@@ -145,7 +152,7 @@ public class SwerveDriveBase extends Subsystem {
     	
     	rrMod = new SwerveModule(
     					new VictorSP(RobotMap.REAR_RIGHT_SWIVEL),
-    					new CANTalon(RobotMap.REAR_LEFT_WHEEL),
+    					new CANTalon(RobotMap.REAR_RIGHT_WHEEL),
     					new Encoder(new DigitalInput(6), 
     								new DigitalInput(7))
     				);
@@ -217,11 +224,6 @@ public class SwerveDriveBase extends Subsystem {
     		rlSpd /= max;
     		rrSpd /= max;
     	}
-    	
-    	if(frAng < 0) frAng += 360;
-    	if(flAng < 0) flAng += 360;
-    	if(rrAng < 0) rrAng += 360;
-    	if(rlAng < 0) rlAng += 360;
     	
     	//Set Wheel Speeds and Angles
     	frMod.setModule(frAng, frSpd);
