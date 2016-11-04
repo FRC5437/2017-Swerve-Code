@@ -74,7 +74,9 @@ public class SwerveDriveBase extends Subsystem {
 						);
 			
 			pidCont.setInputRange(0, 360);
-			//pidCont.setContinuous();
+			pidCont.setContinuous();
+			
+			enc.setSamplesToAverage(127);
 		}
 		
 		public void setModule(double angle, double speed) {
@@ -88,9 +90,7 @@ public class SwerveDriveBase extends Subsystem {
 	    		angle = ((int)angle + 180)%360;
 	    		speed = -speed;
 	    	}
-	    	
-	    	System.out.println("angle: " + angle);
-	    	System.out.println("speed: " + speed);
+	   
 	    	setAngle(angle);
 	    	setSpeed(speed);
 		}
@@ -175,7 +175,7 @@ public class SwerveDriveBase extends Subsystem {
     	if (DriverStation.getInstance().isFMSAttached() && DriverStation.getInstance().getMatchTime() < 4) {
     		setRobotBrake(true);
     	} else {
-    		setRobotBrake(false);
+    		setRobotBrake(true);
     	}
     	
     	frMod.setSpeed(rightValue);
@@ -225,6 +225,7 @@ public class SwerveDriveBase extends Subsystem {
     		rrSpd /= max;
     	}
     	
+    	System.out.println(flMod.getEncPercent());
     	//Set Wheel Speeds and Angles
     	frMod.setModule(frAng, frSpd);
     	flMod.setModule(flAng, flSpd);

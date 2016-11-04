@@ -26,10 +26,10 @@ public class SwerveDrive extends Command {
     	Double RLValue = -(OI.xBoxController.getRawAxis(0));
     	Double rotValue = OI.xBoxController.getRawAxis(4);
     	
-    	if (FBValue > -.2 && FBValue < .2){
+    	if (FBValue > -.1 && FBValue < .1){
     		FBValue = 0.0;
     	}
-    	if (RLValue > -.2 && RLValue < .2){
+    	if (RLValue > -.1 && RLValue < .1){
     		RLValue = 0.0;
     	}
     	if (rotValue > -.2 && rotValue < .2){
