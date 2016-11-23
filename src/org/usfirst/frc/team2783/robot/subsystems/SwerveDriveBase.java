@@ -126,6 +126,14 @@ public class SwerveDriveBase extends Subsystem {
 		
 	}
 	
+	public double cosDeg(double deg) {
+		return Math.cos(Math.toRadians(deg));
+	}
+	
+	public double sinDeg(double deg) {
+		return Math.sin(Math.toRadians(deg));
+	}
+	
     public SwerveDriveBase() {
     	super();
     	
@@ -187,9 +195,10 @@ public class SwerveDriveBase extends Subsystem {
     
     //Method for calculating and setting Speed and Angle of individual wheels given 3 movement inputs
     public void swerveDrive(double fbMot, double rlMot, double rotMot) {
-    	//Swerve Math Taken from: https://www.chiefdelphi.com/media/papers/2426
-    	//fbMot = (fbMot*(Math.sin(getNavSensor().getAngle()))) + (rlMot*(Math.cos(getNavSensor().getAngle())));
-    	//rlMot = -(fbMot*(Math.cos(getNavSensor().getAngle()))) + (rlMot*(Math.sin(getNavSensor().getAngle())));
+    	//Swerve Math Taken from: 
+    	double temp = fbMot*(cosDeg(getNavSensor().getAngle())) + rlMot*(sinDeg(getNavSensor().getAngle()));
+    	rlMot = -(fbMot*(sinDeg(getNavSensor().getAngle())) + rlMot*(cosDeg(getNavSensor().getAngle())));
+    	fbMot = temp;
     	
     	double L = 1.0;
     	double W = 1.0;
@@ -225,7 +234,7 @@ public class SwerveDriveBase extends Subsystem {
     		rrSpd /= max;
     	}
     	
-    	System.out.println(flMod.getEncPercent());
+    	System.out.println(getNavSensor().getAngle());
     	//Set Wheel Speeds and Angles
     	frMod.setModule(frAng, frSpd);
     	flMod.setModule(flAng, flSpd);
