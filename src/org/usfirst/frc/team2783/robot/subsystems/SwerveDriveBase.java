@@ -31,7 +31,7 @@ public class SwerveDriveBase extends Subsystem {
 	private final double i = 0.0025;    //0.005;
 	private final double d = 0.005;    //0.125;
 	
-	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 875.0;
+	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 1;
 	
 	public class PIDOutputClass implements PIDOutput {
 		private VictorSP motor;
@@ -73,9 +73,12 @@ public class SwerveDriveBase extends Subsystem {
 							pidOut
 						);
 			
+			
+			
 			pidCont.setInputRange(0, 360);
 			pidCont.setContinuous();
 			
+			enc.setDistancePerPulse(0.9);
 			enc.setSamplesToAverage(127);
 		}
 		
@@ -85,16 +88,15 @@ public class SwerveDriveBase extends Subsystem {
 				angle += 360;
 			}
 			
-			/*
 			double curAngle = getAngle();
 	    	if(Math.abs(angle - curAngle) > 90 && Math.abs(angle - curAngle) < 270) {
 	    		angle = ((int)angle + 180)%360;
 	    		speed = -speed;
 	    	}
-	    	*/
-	   
+	    	
+			System.out.println(curAngle);
 	    	setAngle(angle);
-	    	setSpeed(speed);
+	    	setSpeed(speed*0.3);
 		}
 		
 		public void setAngle(double angle) {
@@ -238,7 +240,6 @@ public class SwerveDriveBase extends Subsystem {
     		rrSpd /= max;
     	}
     	
-    	System.out.println(getNavSensor().getAngle());
     	//Set Wheel Speeds and Angles
     	frMod.setModule(frAng, frSpd);
     	flMod.setModule(flAng, flSpd);
