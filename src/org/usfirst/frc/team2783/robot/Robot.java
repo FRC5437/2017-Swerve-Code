@@ -3,6 +3,7 @@ package org.usfirst.frc.team2783.robot;
 
 import org.usfirst.frc.team2783.robot.subsystems.SwerveDriveBase;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -26,6 +27,9 @@ public class Robot extends IterativeRobot {
      */
     public void robotInit() {
 		oi = new OI();
+		
+		CameraServer usbCameraServer = CameraServer.getInstance();
+		usbCameraServer.startAutomaticCapture("cam1");
     }
 	
 	/**
