@@ -85,11 +85,13 @@ public class SwerveDriveBase extends Subsystem {
 				angle += 360;
 			}
 			
+			/*
 			double curAngle = getAngle();
 	    	if(Math.abs(angle - curAngle) > 90 && Math.abs(angle - curAngle) < 270) {
 	    		angle = ((int)angle + 180)%360;
 	    		speed = -speed;
 	    	}
+	    	*/
 	   
 	    	setAngle(angle);
 	    	setSpeed(speed);
@@ -195,9 +197,11 @@ public class SwerveDriveBase extends Subsystem {
     
     //Method for calculating and setting Speed and Angle of individual wheels given 3 movement inputs
     public void swerveDrive(double fbMot, double rlMot, double rotMot) {
-    	//Swerve Math Taken from: 
-    	double temp = fbMot*(cosDeg(getNavSensor().getAngle())) + rlMot*(sinDeg(getNavSensor().getAngle()));
-    	rlMot = -(fbMot*(sinDeg(getNavSensor().getAngle())) + rlMot*(cosDeg(getNavSensor().getAngle())));
+    	//Swerve Math Taken from: https://www.chiefdelphi.com/media/papers/2426
+    	
+    	double curAngle = getNavSensor().getAngle();
+    	double temp = fbMot*(cosDeg(curAngle)) + rlMot*(sinDeg(curAngle));
+    	rlMot = fbMot*(sinDeg(curAngle)) + -(rlMot*(cosDeg(curAngle)));
     	fbMot = temp;
     	
     	double L = 1.0;
