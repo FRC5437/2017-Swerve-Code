@@ -236,10 +236,15 @@ public class SwerveDriveBase extends Subsystem {
     	
     	System.out.println(getNavSensor().getAngle());
     	//Set Wheel Speeds and Angles
-    	frMod.setModule(frAng, frSpd);
-    	flMod.setModule(flAng, flSpd);
-    	rrMod.setModule(rrAng, rrSpd);
-    	rlMod.setModule(rlAng, rlSpd);
+    	//frMod.setModule(frAng, frSpd);
+    	//flMod.setModule(flAng, flSpd);
+    	//rrMod.setModule(rrAng, rrSpd);
+    	//rlMod.setModule(rlAng, rlSpd);
+    	
+    	frMod.setSwivel(0.1);
+    	flMod.setSwivel(0.1);
+    	rrMod.setSwivel(0.1);
+    	rlMod.setSwivel(0.1);
     	
     }
     
