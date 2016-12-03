@@ -89,7 +89,7 @@ public class SwerveDriveBase extends Subsystem {
 			}
 			
 			double curAngle = getAngle();
-	    	if(Math.abs(angle - curAngle) > 90 && Math.abs(angle - curAngle) < 270) {
+	    	if(Math.abs(angle - curAngle) > 90 && Math.abs(angle - curAngle) < 270 && angle != 0) {
 	    		angle = ((int)angle + 180)%360;
 	    		speed = -speed;
 	    	}
