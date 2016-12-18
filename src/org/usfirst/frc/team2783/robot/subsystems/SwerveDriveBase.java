@@ -78,7 +78,7 @@ public class SwerveDriveBase extends Subsystem {
 			pidCont.setInputRange(0, 360);
 			pidCont.setContinuous();
 			
-			enc.setDistancePerPulse(0.9);
+			enc.setDistancePerPulse(0.875);
 			enc.setSamplesToAverage(127);
 		}
 		
