@@ -4,15 +4,13 @@ import org.usfirst.frc.team2783.robot.RobotMap;
 import org.usfirst.frc.team2783.robot.commands.SwerveDrive;
 
 import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.CANTalon;
+import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -34,9 +32,9 @@ public class SwerveDriveBase extends Subsystem {
 	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 1;
 	
 	public class PIDOutputClass implements PIDOutput {
-		private VictorSP motor;
+		private CANTalon motor;
 		
-		public PIDOutputClass(VictorSP motor) {
+		public PIDOutputClass(CANTalon motor) {
 			this.motor = motor;
 		}
 		
@@ -48,14 +46,14 @@ public class SwerveDriveBase extends Subsystem {
 	
 	public class SwerveModule {
 		
-		VictorSP swivelMot;
+		CANTalon swivelMot;
 		CANTalon driveMot;
 		Encoder enc;
 		PIDController pidCont;
 		PIDOutputClass pidOut;
 		
 		public SwerveModule(
-				VictorSP swivelMot,
+				CANTalon swivelMot,
 				CANTalon driveMot,
 				Encoder enc) {
 			
@@ -149,28 +147,28 @@ public class SwerveDriveBase extends Subsystem {
 	     }
     	
     	frMod = new SwerveModule(
-    					new VictorSP(RobotMap.FRONT_RIGHT_SWIVEL),
+    					new CANTalon(RobotMap.FRONT_RIGHT_SWIVEL),
     					new CANTalon(RobotMap.FRONT_RIGHT_WHEEL),
     					new Encoder(new DigitalInput(2), 
     								new DigitalInput(3))
     				);
     	
     	flMod = new SwerveModule(
-    					new VictorSP(RobotMap.FRONT_LEFT_SWIVEL),
+    					new CANTalon(RobotMap.FRONT_LEFT_SWIVEL),
     					new CANTalon(RobotMap.FRONT_LEFT_WHEEL),
     					new Encoder(new DigitalInput(0), 
     								new DigitalInput(1))
     				);
     	
     	rrMod = new SwerveModule(
-    					new VictorSP(RobotMap.REAR_RIGHT_SWIVEL),
+    					new CANTalon(RobotMap.REAR_RIGHT_SWIVEL),
     					new CANTalon(RobotMap.REAR_RIGHT_WHEEL),
     					new Encoder(new DigitalInput(6), 
     								new DigitalInput(7))
     				);
     			
     	rlMod = new SwerveModule(
-    					new VictorSP(RobotMap.REAR_LEFT_SWIVEL),
+    					new CANTalon(RobotMap.REAR_LEFT_SWIVEL),
     					new CANTalon(RobotMap.REAR_LEFT_WHEEL),
     					new Encoder(new DigitalInput(4), 
     								new DigitalInput(5))

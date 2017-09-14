@@ -28,8 +28,6 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
 		oi = new OI();
 		
-		CameraServer usbCameraServer = CameraServer.getInstance();
-		usbCameraServer.startAutomaticCapture("cam1");
     }
 	
 	/**
