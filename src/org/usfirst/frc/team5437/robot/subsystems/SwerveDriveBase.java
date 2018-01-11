@@ -1,10 +1,13 @@
-package org.usfirst.frc.team2783.robot.subsystems;
-
-import org.usfirst.frc.team2783.robot.RobotMap;
-import org.usfirst.frc.team2783.robot.commands.SwerveDrive;
+package org.usfirst.frc.team5437.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.ctre.CANTalon;
+
+import org.usfirst.frc.team5437.robot.RobotMap;
+import org.usfirst.frc.team5437.robot.commands.SwerveDrive;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
@@ -32,9 +35,9 @@ public class SwerveDriveBase extends Subsystem {
 	final private double ENCODER_TICKS_FOR_ADJUSTER_TRAVEL = 1;
 	
 	public class PIDOutputClass implements PIDOutput {
-		private CANTalon motor;
+		private WPI_TalonSRX motor;
 		
-		public PIDOutputClass(CANTalon motor) {
+		public PIDOutputClass(WPI_TalonSRX motor) {
 			this.motor = motor;
 		}
 		
@@ -46,15 +49,15 @@ public class SwerveDriveBase extends Subsystem {
 	
 	public class SwerveModule {
 		
-		CANTalon swivelMot;
-		CANTalon driveMot;
+		WPI_TalonSRX swivelMot;
+		WPI_TalonSRX driveMot;
 		Encoder enc;
 		PIDController pidCont;
 		PIDOutputClass pidOut;
 		
 		public SwerveModule(
-				CANTalon swivelMot,
-				CANTalon driveMot,
+				WPI_TalonSRX swivelMot,
+				WPI_TalonSRX driveMot,
 				Encoder enc) {
 			
 			this.swivelMot = swivelMot;
@@ -123,7 +126,8 @@ public class SwerveDriveBase extends Subsystem {
 		}
 		
 		public void setBrake(boolean bool) {
-			driveMot.enableBrakeMode(bool);
+			NeutralMode mode = bool ? NeutralMode.Brake : NeutralMode.Coast; 
+			driveMot.setNeutralMode(mode);
 		}
 		
 	}
@@ -147,29 +151,29 @@ public class SwerveDriveBase extends Subsystem {
 	     }
     	
     	frMod = new SwerveModule(
-    					new CANTalon(RobotMap.FRONT_RIGHT_SWIVEL),
-    					new CANTalon(RobotMap.FRONT_RIGHT_WHEEL),
+    					new WPI_TalonSRX(RobotMap.FRONT_RIGHT_SWIVEL),
+    					new WPI_TalonSRX(RobotMap.FRONT_RIGHT_WHEEL),
     					new Encoder(new DigitalInput(2), 
     								new DigitalInput(3))
     				);
     	
     	flMod = new SwerveModule(
-    					new CANTalon(RobotMap.FRONT_LEFT_SWIVEL),
-    					new CANTalon(RobotMap.FRONT_LEFT_WHEEL),
+    					new WPI_TalonSRX(RobotMap.FRONT_LEFT_SWIVEL),
+    					new WPI_TalonSRX(RobotMap.FRONT_LEFT_WHEEL),
     					new Encoder(new DigitalInput(0), 
     								new DigitalInput(1))
     				);
     	
     	rrMod = new SwerveModule(
-    					new CANTalon(RobotMap.REAR_RIGHT_SWIVEL),
-    					new CANTalon(RobotMap.REAR_RIGHT_WHEEL),
+    					new WPI_TalonSRX(RobotMap.REAR_RIGHT_SWIVEL),
+    					new WPI_TalonSRX(RobotMap.REAR_RIGHT_WHEEL),
     					new Encoder(new DigitalInput(6), 
     								new DigitalInput(7))
     				);
     			
     	rlMod = new SwerveModule(
-    					new CANTalon(RobotMap.REAR_LEFT_SWIVEL),
-    					new CANTalon(RobotMap.REAR_LEFT_WHEEL),
+    					new WPI_TalonSRX(RobotMap.REAR_LEFT_SWIVEL),
+    					new WPI_TalonSRX(RobotMap.REAR_LEFT_WHEEL),
     					new Encoder(new DigitalInput(4), 
     								new DigitalInput(5))
     				); // ):
