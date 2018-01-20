@@ -153,29 +153,29 @@ public class SwerveDriveBase extends Subsystem {
     	frMod = new SwerveModule(
     					new WPI_TalonSRX(RobotMap.FRONT_RIGHT_SWIVEL),
     					new WPI_TalonSRX(RobotMap.FRONT_RIGHT_WHEEL),
-    					new Encoder(new DigitalInput(2), 
-    								new DigitalInput(3))
+    					new Encoder(new DigitalInput(RobotMap.FRONT_RIGHT_ENCODER_CHANNEL_A), 
+    								new DigitalInput(RobotMap.FRONT_RIGHT_ENCODER_CHANNEL_B))
     				);
     	
     	flMod = new SwerveModule(
     					new WPI_TalonSRX(RobotMap.FRONT_LEFT_SWIVEL),
     					new WPI_TalonSRX(RobotMap.FRONT_LEFT_WHEEL),
-    					new Encoder(new DigitalInput(0), 
-    								new DigitalInput(1))
+    					new Encoder(new DigitalInput(RobotMap.FRONT_LEFT_ENCODER_CHANNEL_A), 
+    								new DigitalInput(RobotMap.FRONT_LEFT_ENCODER_CHANNEL_B))
     				);
     	
     	rrMod = new SwerveModule(
     					new WPI_TalonSRX(RobotMap.REAR_RIGHT_SWIVEL),
     					new WPI_TalonSRX(RobotMap.REAR_RIGHT_WHEEL),
-    					new Encoder(new DigitalInput(6), 
-    								new DigitalInput(7))
+    					new Encoder(new DigitalInput(RobotMap.REAR_RIGHT_ENCODER_CHANNEL_B), 
+    								new DigitalInput(RobotMap.REAR_RIGHT_ENCODER_CHANNEL_B))
     				);
     			
     	rlMod = new SwerveModule(
     					new WPI_TalonSRX(RobotMap.REAR_LEFT_SWIVEL),
     					new WPI_TalonSRX(RobotMap.REAR_LEFT_WHEEL),
-    					new Encoder(new DigitalInput(4), 
-    								new DigitalInput(5))
+    					new Encoder(new DigitalInput(RobotMap.REAR_LEFT_ENCODER_CHANNEL_A), 
+    								new DigitalInput(RobotMap.REAR_LEFT_ENCODER_CHANNEL_B))
     				); // ):
     	
     }
