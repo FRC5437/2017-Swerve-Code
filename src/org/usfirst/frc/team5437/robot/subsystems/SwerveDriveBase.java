@@ -167,7 +167,7 @@ public class SwerveDriveBase extends Subsystem {
     	rrMod = new SwerveModule(
     					new WPI_TalonSRX(RobotMap.REAR_RIGHT_SWIVEL),
     					new WPI_TalonSRX(RobotMap.REAR_RIGHT_WHEEL),
-    					new Encoder(new DigitalInput(RobotMap.REAR_RIGHT_ENCODER_CHANNEL_B), 
+    					new Encoder(new DigitalInput(RobotMap.REAR_RIGHT_ENCODER_CHANNEL_A), 
     								new DigitalInput(RobotMap.REAR_RIGHT_ENCODER_CHANNEL_B))
     				);
     			
